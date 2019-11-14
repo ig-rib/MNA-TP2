@@ -11,9 +11,9 @@ function nextX = symmetricIntegrator(q, h, X, gammas, k)
          if labindex == j+n
              for s = 1:labindex-n
                 X = lieTrotterMinus(h/labindex, X, k);
-             end
-         X = gammas(labindex-n)*X;    
+             end    
          end
+      X = gammas(labindex-n)*X;
      end
   end
   for s = 2:q

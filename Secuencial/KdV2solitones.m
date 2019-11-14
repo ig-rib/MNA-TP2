@@ -17,8 +17,6 @@ c_2 =3;
 
 u = 1/2*c_1*(sech(sqrt(c_1)*(x/16+8)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x/2+1)/2)).^2;
 
-#u = ;
-
 delta_t = 0.4/N^2;
 t=0;
 plot(x,u,'LineWidth',2)
