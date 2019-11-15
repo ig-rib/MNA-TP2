@@ -33,24 +33,42 @@ gammas4 = [2/3 2/3 -1/6 -1/6];
 for i = 1:nmax
     t = i*Dt;
     
-   y=U;
-    spmd(o)
-        for j=1:q
-            if labindex==j
-                for s = 1:labindex
+     y(1,:) = U;
+    y(2,:) = U;
+    y(3,:) = U;
+    y(4,:) = U;
+    
+   %y=U;
+%     spmd(o)
+%         for j=1:o
+%             if labindex==j
+%                 for s = 1:labindex
+%                     %y = lieTrotterPlus(Dt/labindex, y, k);
+%                     %parte lineal
+%                     y = y.*exp(1i*k.^3*Dt/labindex);
+%     
+%                     %%parte no lineal
+%                     y = y - (3i*k*Dt/labindex).*fft(real(ifft(y)).^2);
+%                 end
+%             end
+%         y = gammas4(labindex)*y;
+%         end
+%     end
+
+    parfor ( j = 1:o)
+         for s = 1:j
                     %y = lieTrotterPlus(Dt/labindex, y, k);
                     %parte lineal
-                    y = y.*exp(1i*k.^3*Dt/labindex);
+                    y(j,:) = y(j,:).*exp(1i*k.^3*Dt/j);
     
                     %%parte no lineal
-                    y = y - (3i*k*Dt/labindex).*fft(real(ifft(y)).^2);
-                end
-            end
-        y = gammas4(labindex)*y;
-        end
+                    y(j,:) = y(j,:) - (3i*k*Dt/j).*fft(real(ifft(y(j,:))).^2);
+         end
+        y(j,:) = gammas4(j)*y(j,:);
+        
     end
-    for s = 2:q
-       y{1} = y{1} + y{s}; 
+    for s = 2:o
+      y(1, :) = y(1, :) + y(s, :);
     end
 
 %     for z = 1:q
@@ -62,9 +80,9 @@ for i = 1:nmax
 %     y3 = y{3};
 %     y4 = y{4};
 %     U = y1+y2+y3+y4;
-    U = y{1};
+    U = y(1, :);
 
-    %if mod(i,round(nplt/8)) == 0
+    if mod(i,round(nplt*4)) == 0
         u = real(ifft(U));
         %UData(:, i+1) = u'; TData(i+1) = t;
         %UData = [UData u']; TData = [TData t];
@@ -74,7 +92,7 @@ for i = 1:nmax
             ylabel('u')
             text(6,9,['t = ',num2str(t,'%1.2f')],'FontSize',10)
             drawnow
-    %end
+    end
 %     if mod(i,nplt/8) == 0
 %             plot(x,u,'LineWidth',2)
 %             axis([-10 10 0 10])
