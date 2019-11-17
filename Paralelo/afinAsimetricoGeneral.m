@@ -1,4 +1,4 @@
-function result = afinAsimetricoGeneral(q, func, xmin, xmax, N)
+function result = afinAsimetricoGeneral(q, func, xmin, xmax, N, tmax, Dt)
 c = parcluster;
 c.NumWorkers = q;
 parpool('local', q);
@@ -10,14 +10,16 @@ k = [0:Dk:(N/2-1)*Dk,0,-(N/2-1)*Dk:Dk:-Dk];
 
 u = func(x);
 
-Dt = 0.0001;
+%Dt = 0.0001;
 t=0;
 
 U = fft(u);
 
-tmax = 1.25; nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
+%tmax = 1.25; 
+nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
 UData = u'; TData = 0;
-gammas = [2/3 2/3 -1/6 -1/6];%%gammasAsimetrico(q);
+%%gammas = [2/3 2/3 -1/6 -1/6];
+gammas = gammasAsimetrico(q);
 y = zeros(q, length(u));
 for i = 1:nmax
     t = i*Dt;
@@ -47,8 +49,8 @@ for i = 1:nmax
 
     if mod(i,round(nplt*4)) == 0
         u = real(ifft(U));
-        %UData(:, i+1) = u'; TData(i+1) = t;
-        %UData = [UData u']; TData = [TData t];
+        UData(:, i+1) = u'; TData(i+1) = t;
+        UData = [UData u']; TData = [TData t];
         plot(x,u,'LineWidth',2)
             axis([-10 10 0 10])
             xlabel('x')

@@ -11,7 +11,7 @@ c_2 =3;
 
 u = 1/2*c_1*(sech(sqrt(c_1)*(x+5)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+3)/2)).^2;
 
-Dt = 0.4/N^2;
+Dt = 0.0001;
 t=0;
 
 
@@ -19,7 +19,7 @@ t=0;
 
 U = fft(u);
 
-tmax = 1.5; nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
+tmax = 1.25; nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
 
 UData = u'; TData = 0;
 gammas4 = [2/3 2/3 -1/6 -1/6];
@@ -27,7 +27,7 @@ gammas4 = [2/3 2/3 -1/6 -1/6];
 y = zeros(4, length(u));
 
 
-for i = 1:nmax-40000
+for i = 1:nmax
     t = i*Dt;
     
     y(1,:) = U;

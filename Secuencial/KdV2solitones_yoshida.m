@@ -6,7 +6,7 @@ clc
 set(gca,'FontSize',8)
 set(gca,'LineWidth',2)
 
-N = 128;
+N = 256;
 x = linspace(-10,10,N);
 delta_x = x(2) - x(1);
 delta_k = 2*pi/(N*delta_x);
@@ -15,15 +15,15 @@ k = [0:delta_k:(N/2-1)*delta_k,0,-(N/2-1)*delta_k:delta_k:-delta_k];
 c_1=13;
 c_2 =3;
 
-#los coeficientes de Yoshida
-#https://www.asc.tuwien.ac.at/~winfried/splitting/index.php?rc=0&ab=y-44-ab&name=Y%204-4
+%los coeficientes de Yoshida
+%https://www.asc.tuwien.ac.at/~winfried/splitting/index.php?rc=0&ab=y-44-ab&name=Y%204-4
 w1 = 1/(2-2^(1/3));
 w0 = 1-2*w1;
 
 
-u = 1/2*c_1*(sech(sqrt(c_1)*(x/64+8)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x/2+1)/2)).^2;
+u = 1/2*c_1*(sech(sqrt(c_1)*(x+8)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1)/2)).^2;
 
-#u = ;
+%u = ;
 
 delta_t = 0.4/N^2;
 t=0;
@@ -67,13 +67,13 @@ for n = 1:nmax-40000
     
     % no lineal
     
-    #U = U  - (3i*k*delta_t*w1/2).*fft((real(ifft(U))).^2);
+    %U = U  - (3i*k*delta_t*w1/2).*fft((real(ifft(U))).^2);
     
     
-    if mod(n,nplt) == 0
+    if mod(n,round(nplt/8)) == 0
         u = real(ifft(U));
         udata = [udata u']; tdata = [tdata t];
-        if mod(n,4*nplt) == 0
+        if mod(n,round(nplt/8)) == 0
             plot(x,u,'LineWidth',2)
             axis([-10 10 0 10])
             xlabel('x')

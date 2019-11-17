@@ -20,8 +20,8 @@ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(x+3)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1
 
 Dt = 0.0001;
 tmax = 1;
-xmin = -8;
-xmax = 8;
+xmin = -5;
+xmax = 5;
 N = 128;
 x = linspace(xmin,xmax,N);
 Dx = x(2)-x(1);
@@ -50,5 +50,5 @@ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x+3, xmax-xmin)+xmin)/2)).^2 + 1/2*c_2
 %     plot(max(abs(UOrig-UData1)));
 
 %Error
-func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-4, xmax-xmin)+xmin)/2)).^2);
-errorAsimetrico(8, func1, xmin, xmax, N, tmax, Dt, 1);
+func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x+3, xmax-xmin)+xmin)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(mod(x+1,xmax-xmin)+xmin)/2)).^2);
+errorAsimetrico(4, func1, xmin, xmax, N, tmax, Dt, 1);
