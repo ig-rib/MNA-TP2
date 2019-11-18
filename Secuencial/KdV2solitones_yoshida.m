@@ -1,15 +1,11 @@
 %Yoshida 4
 %Kdv Dos_solitones
+function result = KdV2solitones_yoshida(func, xmin, xmax, N, tmax, Dt, wGraph)
 
-clear all
-clc
-set(gca,'FontSize',8)
-set(gca,'LineWidth',2)
 
-N = 256;
-x = linspace(-10,10,N);
-delta_x = x(2) - x(1);
-delta_k = 2*pi/(N*delta_x);
+x = linspace(xmin,xmax,N);
+Dx = x(2) - x(1);
+delta_k = 2*pi/(N*Dx);
 
 k = [0:delta_k:(N/2-1)*delta_k,0,-(N/2-1)*delta_k:delta_k:-delta_k];
 c_1=13;
@@ -21,11 +17,10 @@ w1 = 1/(2-2^(1/3));
 w0 = 1-2*w1;
 
 
-u = 1/2*c_1*(sech(sqrt(c_1)*(x+8)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1)/2)).^2;
+u = func(x);
 
 %u = ;
 
-delta_t = 0.4/N^2;
 t=0;
 plot(x,u,'LineWidth',2)
 axis([-10 10 0 10])
@@ -34,36 +29,36 @@ ylabel('u')
 text(6,9,['t = ',num2str(t,'%1.2f')],'FontSize',14)
 drawnow
 
-tmax = 3; nplt = floor((tmax/100)/delta_t); nmax = round(tmax/delta_t);
+nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
 udata = u'; tdata = 0;
 U = fft(u);
 
-for n = 1:nmax-40000
-    t = n*delta_t;
+for n = 1:nmax
+    t = n*Dt;
     
     % lineal
-    U = U.*exp(1i*k.^3*delta_t*w1/2);
+    U = U.*exp(1i*k.^3*Dt*w1/2);
     
     % no lineal
     
-    U = U  - (3i*k*delta_t*w1).*fft((real(ifft(U))).^2);
+    U = U  - (3i*k*Dt*w1).*fft((real(ifft(U))).^2);
     
     % lineal
-    U = U.*exp(1i*k.^3*delta_t*(w1+w0)/2);
+    U = U.*exp(1i*k.^3*Dt*(w1+w0)/2);
     
     % no lineal
     
-    U = U  - (3i*k*delta_t*w0).*fft((real(ifft(U))).^2);
+    U = U  - (3i*k*Dt*w0).*fft((real(ifft(U))).^2);
     
     % lineal
-    U = U.*exp(1i*k.^3*delta_t*(w1+w0)/2);
+    U = U.*exp(1i*k.^3*Dt*(w1+w0)/2);
     
     % no lineal
     
-    U = U  - (3i*k*delta_t*w1).*fft((real(ifft(U))).^2);
+    U = U  - (3i*k*Dt*w1).*fft((real(ifft(U))).^2);
     
     % lineal
-    U = U.*exp(1i*k.^3*delta_t*w1/2);
+    U = U.*exp(1i*k.^3*Dt*w1/2);
     
     % no lineal
     
@@ -73,19 +68,24 @@ for n = 1:nmax-40000
     if mod(n,round(nplt/8)) == 0
         u = real(ifft(U));
         udata = [udata u']; tdata = [tdata t];
-        if mod(n,round(nplt/8)) == 0
-            plot(x,u,'LineWidth',2)
-            axis([-10 10 0 10])
-            xlabel('x')
-            ylabel('u')
-            text(6,9,['t = ',num2str(t,'%1.2f')],'FontSize',10)
-            drawnow
+        if wGraph
+            if mod(n,round(nplt/8)) == 0
+                plot(x,u,'LineWidth',2)
+                axis([xmin xmax 0 10])
+                xlabel('x')
+                ylabel('u')
+                text(6,9,['t = ',num2str(t,'%1.2f')],'FontSize',10)
+                drawnow
+            end
         end
     end
 end
 
-figure
+if wGraph
+    figure
 
-waterfall(x,tdata(1:4:end),udata(:,1:4:end)')
-xlabel x, ylabel t, axis([-10 10 0 tmax 0 10]), grid off
-zlabel u
+    waterfall(x,tdata(1:4:end),udata(:,1:4:end)')
+    xlabel x, ylabel t, axis([xmin xmax 0 tmax 0 10]), grid off
+    zlabel u
+end
+end

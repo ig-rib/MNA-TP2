@@ -1,5 +1,6 @@
 function result = afinAsimetricoGeneralSecuencial(q, func, xmin, xmax, N, tmax, Dt, wGraph)
 
+tic
 x = linspace(xmin,xmax,N);
 Dx = x(2) - x(1);
 Dk = 2*pi/(N*Dx);
@@ -77,7 +78,7 @@ for i = 1:nmax
 
 end
 
-
+toc
 if wGraph
 figure
     waterfall(x,TData(1:4:end),UData(:,1:4:end)')
