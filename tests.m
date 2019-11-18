@@ -6,8 +6,8 @@ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(x+3)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1
 
 
 %Secuencial vs Paralelo
- afinAsimetricoGeneralSecuencial(4, func1, -5, 5, 128, 1, 0.0001, 1);
- afinAsimetricoGeneral(4, func1, -5, 5, 128, 1, 0.0001);
+ %afinAsimetricoGeneralSecuencial(4, func1, -5, 5, 128, 1, 0.0001, 1);
+ %afinAsimetricoGeneral(4, func1, -5, 5, 128, 1, 0.0001);
 %------------------------------------------------------------------------%
 %Prueba de error entre distintos ordenes
 % for i=4:7
@@ -20,7 +20,7 @@ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(x+3)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1
 % %%loglog(Error);
 % end
 %------------------------------------------------------------------------%
-Dt = 0.00001;
+Dt = 0.00025;
 tmax = 1;
 xmin = -5;
 xmax = 5;
@@ -32,8 +32,16 @@ nplt = floor((tmax/100)/Dt);
 
 func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x+3, xmax-xmin)+xmin)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(mod(x+1,xmax-xmin)+xmin)/2)).^2);
 
+solnExacta = @(x, t)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-4-c_1*(t), xmax-xmin)+xmin)/2)).^2);
 %Error del afin asimetrico vs solucion analitica
-% func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-4, xmax-xmin)+xmin)/2)).^2);
-% errorAsimetrico(8, func1, xmin, xmax, N, tmax, Dt, 1);
+ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-4, xmax-xmin)+xmin)/2)).^2);
+ errorAsimetrico(4, func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
+ %errorYoshida(func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
+ 
 %------------------------------------------------------------------------%
+
 %KdV2solitones_yoshida(func1, xmin, xmax, N, tmax, Dt, 1);
+
+%------------------------------------------------------------------------%
+
+%aagSPMD(2, func1, xmin, xmax, N, tmax, Dt, 1);

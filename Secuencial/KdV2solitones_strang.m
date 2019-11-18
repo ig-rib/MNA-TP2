@@ -21,6 +21,7 @@ u = 1/2*c_1*(sech(sqrt(c_1)*(x+8)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1)/2)).^2 
 %u = ;
 
 delta_t = 0.4/N^2;
+%delta_t = 0.0001;
 t=0;
 plot(x,u,'LineWidth',2)
 axis([-10 10 0 10])
@@ -33,7 +34,7 @@ tmax = 1.5; nplt = floor((tmax/100)/delta_t); nmax = round(tmax/delta_t);
 udata = u'; tdata = 0;
 U = fft(u);
 
-for n = 1:nmax-40000
+for n = 1:nmax
     t = n*delta_t;
     
     % lineal

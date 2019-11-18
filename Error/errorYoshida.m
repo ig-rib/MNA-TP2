@@ -1,4 +1,4 @@
-function result = errorAsimetrico(q, func, exactF, xmin, xmax, N, tmax, Dt, wGraph)
+function result = errorYoshida(func, exactF, xmin, xmax, N, tmax, Dt, wGraph)
 
 x = linspace(xmin,xmax,N);
 Dx = x(2) - x(1);
@@ -8,6 +8,8 @@ k = [0:Dk:(N/2-1)*Dk,0,-(N/2-1)*Dk:Dk:-Dk];
 
 u = func(x);
 
+w1 = 1/(2-2^(1/3));
+w0 = 1-2*w1;
 
 %Dt = 0.0001;
 
@@ -17,49 +19,20 @@ U = fft(u);
 nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt/5);
 UData = u'; TData = 0;
 %%gammas = [2/3 2/3 -1/6 -1/6];
-gammas = gammasAsimetrico(q);
-y = zeros(q, length(u));
 Error = [];
 for i = 1:nmax
     t = i*Dt;
    
-    for j = 1:q
-         y(j,:)=U;
-    end
-    
     uorig = exactF(x, t);
     
-    for j = 1:q
-         for s = 1:j
-                    %Lie Trotter con FFT 
-                    %parte lineal
-                   
-                    y(j,:) = y(j,:).*exp(1i*k.^3*Dt/j);
+    U = U.*exp(1i*k.^3*Dt*w1/2);
+    U = U  - (3i*k*Dt*w1).*fft((real(ifft(U))).^2);
+    U = U.*exp(1i*k.^3*Dt*(w1+w0)/2);
+    U = U  - (3i*k*Dt*w0).*fft((real(ifft(U))).^2);
+    U = U.*exp(1i*k.^3*Dt*(w1+w0)/2);
+    U = U  - (3i*k*Dt*w1).*fft((real(ifft(U))).^2);
+    U = U.*exp(1i*k.^3*Dt*w1/2);
     
-                    %%parte no lineal
-                    y(j,:) = y(j,:) - (3i*k*Dt/j).*fft(real(ifft(y(j,:))).^2);
-                    
-
-%                     %Strang con FFT
-%                         % lineal
-%                     y(j,:) = y(j,:).*exp(1i*k.^3*Dt/j/2);
-% 
-%                     % no lineal
-% 
-%                     y(j,:) = y(j,:)  - (3i*k*Dt/j).*fft((real(ifft(y(j,:)))).^2);
-% 
-%                     % lineal 
-% 
-%                     y(j,:) = y(j,:).*exp(1i*k.^3*Dt/j/2);
-         end
-        y(j,:) = gammas(j)*y(j,:);
-        
-    end
-    for s = 2:q
-      y(1, :) = y(1, :) + y(s, :);
-    end
-
-    U = y(1, :);
 
     if mod(i,round(nplt)) == 0
         u = real(ifft(U));
@@ -71,7 +44,6 @@ for i = 1:nmax
         
         if wGraph
             plot(x,u, x, uorig,x, Error(:, round(i/nplt))'),
-                legend('Solucion Numerica', 'Solucion Analitica', 'Error', 'Location', 'southoutside');
                 axis([xmin xmax 0 10])
                 xlabel('x')
                 ylabel('u')
