@@ -1,5 +1,8 @@
-function result = afinAsimetricoGeneralSecuencial(q, func, xmin, xmax, N, tmax, Dt, wGraph)
+function result = aagSPMD(q, func, xmin, xmax, N, tmax, Dt, wGraph)
 
+c = parcluster;
+c.NumWorkers = q;
+parpool('local', q);
 tic
 x = linspace(xmin,xmax,N);
 Dx = x(2) - x(1);
@@ -19,29 +22,29 @@ nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
 UData = u'; TData = 0;
 %%gammas = [2/3 2/3 -1/6 -1/6];
 gammas = gammasAsimetrico(q);
-
+y = [];
 for i = 1:nmax
     t = i*Dt;
-   
     y = U;
     spmd(q)
         for j = 1:q
-             for s = 1:j
+             if labindex == j
+                 for s=1:labindex
                         %Lie Trotter con FFT 
-                        y = y.*exp(1i*k.^3*Dt/j);
-                        y = y - (3i*k*Dt/j).*fft(real(ifft(y)).^2);
-
-                        end
-            y(j,:) = gammas(j)*y(j,:);
-
+                        y = y.*exp(1i*k.^3*Dt/labindex);
+                        y = y - (3i*k*Dt/labindex).*fft(real(ifft(y)).^2);
+                 end
+             end
+            y = gammas(labindex)*y;
         end
     end
     for s = 2:q
       y{1} = y{1} + y{s};
     end
-
     U = y{1};
-
+    
+    %plot    
+    plot(real(ifft(U)));
     if mod(i,round(nplt)) == 0
         u = real(ifft(U));
         if mod(i,round(nplt*4))==0
@@ -62,6 +65,8 @@ for i = 1:nmax
 end
 
 toc
+delete(gcp('nocreate'))
+
 if wGraph
 figure
     waterfall(x,TData(1:4:end),UData(:,1:4:end)')

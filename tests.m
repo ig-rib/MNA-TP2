@@ -35,8 +35,8 @@ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x+3, xmax-xmin)+xmin)/2)).^2 + 1/2*c_2
 solnExacta = @(x, t)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-2-c_1*(t), xmax-xmin)+xmin)/2)).^2);
 %Error del afin asimetrico vs solucion analitica
  func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-2, xmax-xmin)+xmin)/2)).^2);
- %errorAsimetrico(2, func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
- %errorYoshida(func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
+ errorAsimetrico(2, func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
+ errorYoshida(func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
  errorStrang(func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
 %------------------------------------------------------------------------%
 
@@ -44,4 +44,4 @@ solnExacta = @(x, t)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-2-c_1*(t), xmax-xmin)+xmin)/
 
 %------------------------------------------------------------------------%
 
-%aagSPMD(2, func1, xmin, xmax, N, tmax, Dt, 1);
+%afinAsimetricoGeneralSPMD(2, func1, xmin, xmax, N, tmax, Dt, 1);

@@ -1,4 +1,4 @@
-function result = aagSPMD(q, func, xmin, xmax, N, tmax, Dt, wGraph)
+function result = afinAsimetricoGeneralSPMD(q, func, xmin, xmax, N, tmax, Dt, wGraph)
 
 c = parcluster;
 c.NumWorkers = q;
@@ -25,13 +25,10 @@ gammas = gammasAsimetrico(q);
 y = [];
 for i = 1:nmax
     t = i*Dt;
-   
     y = U;
-   
     spmd(q)
         for j = 1:q
              if labindex == j
-                  
                  for s=1:labindex
                         %Lie Trotter con FFT 
                         y = y.*exp(1i*k.^3*Dt/labindex);
@@ -41,12 +38,12 @@ for i = 1:nmax
             y = gammas(labindex)*y;
         end
     end
-
-   
     for s = 2:q
       y{1} = y{1} + y{s};
     end
     U = y{1};
+    
+    %plot    
     plot(real(ifft(U)));
     if mod(i,round(nplt)) == 0
         u = real(ifft(U));
