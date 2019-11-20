@@ -20,11 +20,11 @@ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(x+3)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(x+1
 % %%loglog(Error);
 % end
 %------------------------------------------------------------------------%
-Dt = 0.00025;
+Dt = 0.0001;
 tmax = 1;
-xmin = -5;
-xmax = 5;
-N = 128;
+xmin = -4;
+xmax = 4;
+N = 64;
 x = linspace(xmin,xmax,N);
 Dx = x(2)-x(1);
 nmax = round(tmax/Dt);
@@ -32,12 +32,12 @@ nplt = floor((tmax/100)/Dt);
 
 func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x+3, xmax-xmin)+xmin)/2)).^2 + 1/2*c_2*(sech(sqrt(c_2)*(mod(x+1,xmax-xmin)+xmin)/2)).^2);
 
-solnExacta = @(x, t)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-4-c_1*(t), xmax-xmin)+xmin)/2)).^2);
+solnExacta = @(x, t)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-2-c_1*(t), xmax-xmin)+xmin)/2)).^2);
 %Error del afin asimetrico vs solucion analitica
- func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-4, xmax-xmin)+xmin)/2)).^2);
- errorAsimetrico(4, func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
+ func1 = @(x)(1/2*c_1*(sech(sqrt(c_1)*(mod(x-2, xmax-xmin)+xmin)/2)).^2);
+ %errorAsimetrico(2, func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
  %errorYoshida(func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
- 
+ errorStrang(func1, solnExacta, xmin, xmax, N, tmax, Dt, 1);
 %------------------------------------------------------------------------%
 
 %KdV2solitones_yoshida(func1, xmin, xmax, N, tmax, Dt, 1);

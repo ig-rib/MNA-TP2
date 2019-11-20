@@ -22,14 +22,16 @@ nplt = floor((tmax/100)/Dt); nmax = round(tmax/Dt);
 UData = u'; TData = 0;
 %%gammas = [2/3 2/3 -1/6 -1/6];
 gammas = gammasAsimetrico(q);
-
+y = [];
 for i = 1:nmax
     t = i*Dt;
    
     y = U;
+   
     spmd(q)
         for j = 1:q
              if labindex == j
+                  
                  for s=1:labindex
                         %Lie Trotter con FFT 
                         y = y.*exp(1i*k.^3*Dt/labindex);
@@ -40,6 +42,7 @@ for i = 1:nmax
         end
     end
 
+   
     for s = 2:q
       y{1} = y{1} + y{s};
     end
